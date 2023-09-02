@@ -43,7 +43,7 @@ function print_msg(){
 function show_usage() {
     echo "Change to an existing CTF room write-up directory ($HOME/ctf/\$PLATFORM/\$ROOM_NAME)."
     echo ""
-    echo "  Usage: source $0 <platform> <room_name>"
+    echo "  Usage: source $1 <platform> <room_name>"
     echo ""
     echo "Arguments:"
     echo "  platform   Should be an acronym for a CTF platform like: \"thm\" for TryHackMe, or \"htb\" for HackTheBox, etc."
@@ -63,7 +63,7 @@ fi
 
 # Check for arguments
 if [ $# -ne 2 ]; then
-    show_usage
+    show_usage "$0"
     [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
@@ -88,7 +88,7 @@ if [ -d "$ROOM_PATH" ]; then
     print_msg success "ROOM environment variable changed to $1"
 
 else
-    show_usage
+    show_usage "$0"
     echo ""
     print_msg error "The room \"$ROOM_PATH\" does not exist. Use \"newroom.sh\" to set up a new room."
 fi

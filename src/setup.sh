@@ -43,7 +43,7 @@ function print_msg(){
 function show_usage() {
     echo "Adds this tool directory to the PATH if it doesn't already exist."
     echo ""
-    echo "  Usage: source $0 [options]"
+    echo "  Usage: source $1 [options]"
     echo ""
     echo "Options:"
     echo "  --help      Shows this screen."
@@ -75,7 +75,7 @@ else
 fi
 
 if [ "$1" = "--help" ]; then
-    show_usage
+    show_usage "$0"
     $WAS_SOURCED ? return : exit 0
 elif [ "$1" = "--remove" ]; then
     if [ "$ALREADY_IN_PATH" = true ]; then

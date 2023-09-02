@@ -44,7 +44,7 @@ function show_usage() {
 
     echo "Create a new write-up directory with template files for a CTF room."
     echo ""
-    echo "  Usage: source $0 <platform> <room_name>"
+    echo "  Usage: source $1 <platform> <room_name>"
     echo ""
     echo "Arguments:"
     echo "  platform   Should be an acronym for a CTF platform like: \"thm\" for TryHackMe, or \"htb\" for HackTheBox, etc."
@@ -64,18 +64,18 @@ fi
 
 # Check for arguments
 if [ $# -eq 0 ]; then
-    show_usage
+    show_usage "$0"
     [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
 # Handle help argument
 if [ "$1" = "--help" ]; then
-    show_usage
+    show_usage "$0"
     [[ "$WAS_SOURCED" == true ]] && return || exit 0
 fi
 
 if [ $# -ne 2 ]; then
-    show_usage
+    show_usage "$0"
     [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
