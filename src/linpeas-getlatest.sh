@@ -42,6 +42,7 @@ function print_msg(){
 
 cd ~/Downloads/
 
+
 # Define the release URL
 release_url="https://github.com/carlospolop/PEASS-ng/releases"
 
@@ -52,24 +53,27 @@ latest_release_url=$(curl -sSLI -o /dev/null -w %{url_effective} "$release_url/l
 # Extract the latest release version from the URL
 latest_release_version=$(basename "$latest_release_url")
 
-# Check if linpeas.sh already exists
-if [ -f "linpeas.sh" ]; then
+linpeas_url="$release_url/download/$latest_release_version/linpeas.sh"
+DOWNLOAD_FILE=~/Downloads/linpeas.sh
+
+if [ -f "${DOWNLOAD_FILE}" ]; then
     print_msg "warning" "linpeas.sh already exists. Removing..."
-    rm linpeas.sh
+    rm -f ${DOWNLOAD_FILE}
 fi
 
-# Construct the URL for linpeas.sh
-linpeas_url="$release_url/download/$latest_release_version/linpeas.sh"
 
 # Download linpeas.sh using wget
-print_msg "info" "Downloading the latest version of linpeas.sh..."
-wget -q -O linpeas.sh "$linpeas_url"
+print_msg "info" "Downloading the latest version to: ${DOWNLOAD_FILE}..."
+wget -q -O ${DOWNLOAD_FILE} --show-progress --progress=bar:force "$linpeas_url"
 
 # Check if download was successful
 if [ $? -eq 0 ]; then
     print_msg "success" "linpeas.sh has been downloaded successfully."
     # chmod +x linpeas.sh # I don't want this runnable on my workstation.
     # print_msg "info" "linpeas.sh has been made executable."
+    echo ""
+    ls $DOWNLOAD_FILE -la
+    echo ""
 else
     print_msg "error" "Failed to download linpeas.sh."
 fi

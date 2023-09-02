@@ -32,7 +32,7 @@ function print_msg(){
             echo -e "[${Red}-${NC}] ${LightRed}${description}${NC}"
         ;;
         "warning")
-            echo -e "[${Yellow}?${NC}] ${Yellow}${description}${NC}"
+            echo -e "[${Yellow}!${NC}] ${Yellow}${description}${NC}"
         ;;
         "info")
             echo -e "[${LightCyan}*${NC}] ${LightCyan}${description}${NC}"
@@ -40,23 +40,47 @@ function print_msg(){
     esac
 }
 
+function show_usage() {
+
+    echo "Create a new write-up directory with template files for a CTF room."
+    echo ""
+    echo "  Usage: source $0 <platform> <room_name>"
+    echo ""
+    echo "Arguments:"
+    echo "  platform   Should be an acronym for a CTF platform like: \"thm\" for TryHackMe, or \"htb\" for HackTheBox, etc."
+    echo "  room_name  Should be the name of the \"room\" on the CTF platform, which is usually the last part of the URL."
+}
+
+# Check if the script was sourced
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+    print_msg info "Script was sourced, so new environment variables will take effect."
+    WAS_SOURCED=true
+else
+    print_msg warning "Script was not sourced, so new environment variables will NOT automatically take effect. When done, please run:\n\n\tsource ~/.zshrc\n"
+    WAS_SOURCED=false
+fi
+
 # Check for arguments
 if [ $# -eq 0 ]; then
-    echo "Create a new THM room write-up directory with template files."
-    echo ""
-    echo "  Usage: $0 <room_name>"
-    exit 1
+    show_usage
+    [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
 # Handle help argument
 if [ "$1" = "--help" ]; then
-    echo "Create a new THM room write-up directory with template files."
-    echo ""
-    echo "  Usage: $0 <room_name>"
-    exit 0
+    show_usage
+    [[ "$WAS_SOURCED" == true ]] && return || exit 0
 fi
 
-ROOM_PATH=`pwd`/${1}/
+if [ $# -ne 2 ]; then
+    show_usage
+    [[ "$WAS_SOURCED" == true ]] && return || exit 1
+fi
+
+PLATFORM=$1
+ROOM_NAME=$2
+ROOM_PATH="$HOME/ctf/$PLATFORM/$ROOM_NAME"
+SCRIPT_DIR="$(dirname "$0")"
 
 # Initialize a variable to track success
 success=true
@@ -69,7 +93,7 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ "$success" = true ]; then
-    print_msg info "STEP 2: Setting ROOM environment variable"
+    print_msg info "STEP 2: Setting ROOM environment variable in ~/.zshrc"
 
     export_statement="export ROOM=${ROOM_PATH}"
     zshrc_file=~/.zshrc
@@ -82,31 +106,28 @@ if [ "$success" = true ]; then
         print_msg success "ROOM export statement updated in: $zshrc_file"
     fi
 
-    print_msg info "Reloading .zshrc environment (${zshrc_file})"
-    source ${zshrc_file}
-
-    if [ $? -ne 0 ]; then
+    if ! grep -q "export ROOM" ~/.zshrc; then
         print_msg error "Failed to set ROOM environment variable"
         success=false
     fi
 fi
 
 if [ "$success" = true ]; then
-    print_msg info "STEP 3: Copy files from _TemplateRoom to: $ROOM"
-    cp -r ./_TemplateRoom/* "$ROOM"
+    print_msg info "STEP 3: Copy files from _TemplateRoom to: $ROOM_PATH"
+    cp -r ${SCRIPT_DIR}/_TemplateRoom/* "$ROOM_PATH"
     if [ $? -ne 0 ]; then
-        print_msg error "Failed to copy files to $ROOM"
+        print_msg error "Failed to copy files to $ROOM_PATH"
         success=false
     else
-        mv "${ROOM}_Template.md" "${ROOM}index.md"
+        mv "${ROOM_PATH}/_Template.md" "${ROOM_PATH}/index.md"
     fi
 fi
 
 if [ "$success" = true ]; then
     print_msg info "STEP 4: Search and replace %ROOM% in files"
-    for file in "$ROOM"/*; do
+    for file in "$ROOM_PATH"/*; do
         if [ -f "$file" ]; then
-            sed -i "s/%ROOM%/${1}/g" "$file"
+            sed -i "s/%ROOM%/${ROOM_NAME}/g" "$file"
             if [ $? -ne 0 ]; then
                 print_msg error "Failed to replace %ROOM% in $file"
                 success=false
@@ -117,12 +138,24 @@ if [ "$success" = true ]; then
 fi
 
 if [ "$success" = true ]; then
-    print_msg info "STEP 5: Changing directory to $ROOM"
-    cd "$ROOM" || { print_msg error "Failed to switch to $ROOM"; exit 1; }
+    print_msg info "STEP 5: Changing directory to $ROOM_PATH"
+    cd "$ROOM_PATH" || { print_msg error "Failed to switch to $ROOM_PATH"; exit 1; }
     if [ $? -ne 0 ]; then
-        print_msg error "Failed to switch to $ROOM"
+        print_msg error "Failed to switch to $ROOM_PATH"
         success=false
     fi
+fi
+
+if [[ "$success" == true && "$WAS_SOURCED" == true ]]; then
+
+    print_msg info "STEP 6: Reloading .zshrc environment (${zshrc_file})"
+    source ${zshrc_file}
+
+    if [ $? -ne 0 ]; then
+        print_msg error "Failed to .zshrc environment."
+        success=false
+    fi
+
 fi
 
 if [ "$success" = true ]; then

@@ -32,7 +32,7 @@ function print_msg(){
             echo -e "[${Red}-${NC}] ${LightRed}${description}${NC}"
         ;;
         "warning")
-            echo -e "[${Yellow}?${NC}] ${Yellow}${description}${NC}"
+            echo -e "[${Yellow}!${NC}] ${Yellow}${description}${NC}"
         ;;
         "info")
             echo -e "[${LightCyan}*${NC}] ${LightCyan}${description}${NC}"
@@ -40,12 +40,21 @@ function print_msg(){
     esac
 }
 
+# Check if the script was sourced
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+    print_msg info "Script was sourced, so new environment variables will take effect."
+    WAS_SOURCED=true
+else
+    print_msg warning "Script was not sourced, so new environment variables will NOT automatically take effect. When done, please run:\n\n\tsource ~/.zshrc\n"
+    WAS_SOURCED=false
+fi
+
 # Check for arguments
 if [ $# -eq 0 ]; then
     echo "Set the target of your current CTF to the \$TARGET environment variable."
     echo ""
-    echo "  Usage: $0 <target-ip-address>"
-    exit 1
+    echo "  Usage: source $0 <target-ip-address>"
+    [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
 TARGET=${1}
@@ -59,7 +68,14 @@ print_msg success "TARGET export statement added to: $zshrc_file"
 
 print_msg success "TARGET environment variable changed to $TARGET"
 
-echo ""
-print_msg info "Please run the following command to reload your environment:"
-echo ""
-echo "  source ${zshrc_file}"
+if [[ "$WAS_SOURCED" == true ]]; then
+
+    print_msg info "Reloading .zshrc environment (${zshrc_file})"
+    source ${zshrc_file}
+
+    if [ $? -ne 0 ]; then
+        print_msg error "Failed to .zshrc environment."
+        success=false
+    fi
+
+fi

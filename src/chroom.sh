@@ -32,7 +32,7 @@ function print_msg(){
             echo -e "[${Red}-${NC}] ${Red}${description}${NC}"
         ;;
         "warning")
-            echo -e "[${Yellow}?${NC}] ${Yellow}${description}${NC}"
+            echo -e "[${Yellow}!${NC}] ${Yellow}${description}${NC}"
         ;;
         "info")
             echo -e "[${LightCyan}*${NC}] ${LightCyan}${description}${NC}"
@@ -43,17 +43,26 @@ function print_msg(){
 function show_usage() {
     echo "Change to an existing CTF room write-up directory ($HOME/ctf/\$PLATFORM/\$ROOM_NAME)."
     echo ""
-    echo "  Usage: $0 <platform> <room_name>"
+    echo "  Usage: source $0 <platform> <room_name>"
     echo ""
     echo "Arguments:"
     echo "  platform   Should be an acronym for a CTF platform like: \"thm\" for TryHackMe, or \"htb\" for HackTheBox, etc."
     echo "  room_name  Should be the name of the \"room\" on the CTF platform, which is usually the last part of the URL."
 }
 
+# Check if the script was sourced
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+    print_msg info "Script was sourced, so new environment variables will take effect."
+    WAS_SOURCED=true
+else
+    print_msg warning "Script was not sourced, so new environment variables will NOT automatically take effect. When done, please run:\n\n\tsource ~/.zshrc\n"
+    WAS_SOURCED=false
+fi
+
 # Check for arguments
 if [ $# -ne 2 ]; then
     show_usage
-    exit 1
+    [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
 PLATFORM=$1
@@ -70,13 +79,20 @@ if [ -d "$ROOM_PATH" ]; then
 
     print_msg success "ROOM environment variable changed to $1"
 
-    echo ""
-    print_msg info "Please run the following command to reload your environment:"
-    echo ""
-    echo "  source ${zshrc_file}"
-
 else
     show_usage
     echo ""
     print_msg error "The room \"$ROOM_PATH\" does not exist. Use \"newroom.sh\" to set up a new room."
+fi
+
+if [[ "$WAS_SOURCED" == true ]]; then
+
+    print_msg info "Reloading .zshrc environment (${zshrc_file})"
+    source ${zshrc_file}
+
+    if [ $? -ne 0 ]; then
+        print_msg error "Failed to .zshrc environment."
+        success=false
+    fi
+
 fi

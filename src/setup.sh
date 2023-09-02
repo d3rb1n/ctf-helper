@@ -43,22 +43,27 @@ function print_msg(){
 function show_usage() {
     echo "Adds this tool directory to the PATH if it doesn't already exist."
     echo ""
-    echo "  Usage: $0 [options]"
+    echo "  Usage: source $0 [options]"
     echo ""
     echo "Options:"
     echo "  --help      Shows this screen."
     echo "  --remove    Remove the current folder from the PATH if present."
 }
 
-# if [ $# -eq 0 ]; then
-#     show_usage
-#     exit 0
-# fi
+
+# Check if the script was sourced
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+    print_msg info "Script was sourced, so new environment variables will take effect."
+    WAS_SOURCED=true
+else
+    print_msg warning "Script was not sourced, so new environment variables will NOT automatically take effect. When done, please run:\n\n\tsource ~/.zshrc\n"
+    WAS_SOURCED=false
+fi
 
 # Check if ~/.zshrc exists
 if [ ! -f ~/.zshrc ]; then
     print_msg warning "No ~/.zshrc file found. These scripts are not meant for your current shell."
-    exit 1
+    [[ "$WAS_SOURCED" == true ]] && return || exit 1
 fi
 
 # Check if current folder is already in the PATH
@@ -71,27 +76,33 @@ fi
 
 if [ "$1" = "--help" ]; then
     show_usage
-    exit 0
+    $WAS_SOURCED ? return : exit 0
 elif [ "$1" = "--remove" ]; then
     if [ "$ALREADY_IN_PATH" = true ]; then
         sed -i "s|export PATH=\$PATH:$CURRENT_FOLDER||" ~/.zshrc
         sed -i '/^$/d' ~/.zshrc
         print_msg success "Removed current folder from PATH in ~/.zshrc."
-        print_msg info "Please run the following command to reload your environment:"
-        echo ""
-        echo "  source ~/.zshrc"        
     else
         print_msg info "Current folder is not in the PATH."
     fi
-    exit 0
+    [[ "$WAS_SOURCED" == true ]] && return || exit 0
 fi
 
 if [ "$ALREADY_IN_PATH" = false ]; then
     echo "export PATH=\$PATH:$CURRENT_FOLDER" >> ~/.zshrc
     print_msg success "Added current folder to PATH in ~/.zshrc."
-    print_msg info "Please run the following command to reload your environment:"
-    echo ""
-    echo "  source ~/.zshrc"
 else
     print_msg info "Current folder is already in the PATH."
+fi
+
+if [[ "$WAS_SOURCED" == true ]]; then
+
+    print_msg info "Reloading .zshrc environment (${zshrc_file})"
+    source ${zshrc_file}
+
+    if [ $? -ne 0 ]; then
+        print_msg error "Failed to .zshrc environment."
+        success=false
+    fi
+
 fi
