@@ -48,6 +48,8 @@ function show_usage() {
     echo "Arguments:"
     echo "  platform   Should be an acronym for a CTF platform like: \"thm\" for TryHackMe, or \"htb\" for HackTheBox, etc."
     echo "  room_name  Should be the name of the \"room\" on the CTF platform, which is usually the last part of the URL."
+    echo ""
+    echo "Set CTF_HOME to the root folder to use, otherwise $HOME/ctf/ is used."
 }
 
 # Check if the script was sourced
@@ -67,7 +69,13 @@ fi
 
 PLATFORM=$1
 ROOM_NAME=$2
-ROOM_PATH="$HOME/ctf/$PLATFORM/$ROOM_NAME"
+
+if [ -n "$CTF_HOME" ]; then
+    ROOM_PATH="$CTF_HOME/$PLATFORM/$ROOM_NAME"
+else
+    ROOM_PATH="$HOME/ctf/$PLATFORM/$ROOM_NAME"
+fi
+
 
 if [ -d "$ROOM_PATH" ]; then
     export_statement="export ROOM=${ROOM_PATH}"

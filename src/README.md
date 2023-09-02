@@ -23,7 +23,11 @@ These scripts related to rooms assumes a fixed folder structure of:
 ~/ctf/<PLATFORM>/<ROOM>/
 ```
 
-So that you can organize your working-folders and/or write-ups by platform, then by room. By "platform", this means: TryHackMe, HackTheBox, etc.
+So that you can organize your working-folders and/or write-ups by platform, then by room. By "platform", this means: TryHackMe, HackTheBox, etc. The root of this structure is `~/ctf/`. However, this can be overridden by setting the `CTF_HOME` environment variable. For example, append the following to your `~/.zshrc` file and then `source ~/.zshrc` to make it go into effect:
+
+```bash
+export CTF_HOME=/home/jdoe/gitlocal/jdoe/my-writeups/src/
+```
 
 ### Proposed Acronyms
 
@@ -86,6 +90,8 @@ Change to an existing CTF room write-up directory (/home/jdoe/ctf/$PLATFORM/$ROO
 Arguments:
   platform   Should be an acronym for a CTF platform like: "thm" for TryHackMe, or "htb" for HackTheBox, etc.
   room_name  Should be the name of the "room" on the CTF platform, which is usually the last part of the URL.
+
+Set CTF_HOME to the root folder to use, otherwise /home/jdoe/ctf/ is used.
 ```
 
 ### Script: `set-target.sh`
