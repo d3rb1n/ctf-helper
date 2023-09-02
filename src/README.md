@@ -61,7 +61,7 @@ Running `setup.sh --remove` will remove the current folder from the `PATH` envir
 ```bash
 Adds this tool directory to the PATH if it doesn't already exist.
 
-  Usage: show_usage [options]
+  Usage: setup.sh [options]
 
 Options:
   --help      Shows this screen.
@@ -85,7 +85,7 @@ Changes to an existing Capture the Flag room on your filesystem where you are ta
 ```bash
 Change to an existing CTF room write-up directory (/home/jdoe/ctf/$PLATFORM/$ROOM_NAME).
 
-  Usage: show_usage <platform> <room_name>
+  Usage: chroom.sh <platform> <room_name>
 
 Arguments:
   platform   Should be an acronym for a CTF platform like: "thm" for TryHackMe, or "htb" for HackTheBox, etc.
