@@ -1,29 +1,20 @@
 ---
-title: "THM:%ROOM%"
-subtitle: "TryHackMe CTF room: https://tryhackme.com/room/%ROOM%"
+title: "%ROOM%"
+subtitle: "CTF room: https://tryhackme.com/room/%ROOM%"
 category: "CTF"
 tags: ctf,nmap,gobuster,dirbuster,session,broken-authentication,javascript,apache,ubuntu,john,gpg2john,linpeas,privesc,cron
 ---
-# THM:%ROOM%
+# %ROOM%
 
 URL: [https://tryhackme.com/room/%ROOM%](https://tryhackme.com/room/%ROOM%) [Easy]
 
-Tags: 
-<div style="margin-left: 5px;">
-{% assign tags = page.tags | split: "," %}
-{% for tag in tags %}
-<a href="../search/?q={{tag}}" title="Click to search by this tag"><span class="badge bg-secondary">{{tag}}</span></a>
-{% endfor %}
-</div>
-<hr>
-
-## Reconnaissance
+## PHASE 1: Reconnaissance
 
 Description of the room:
 
 > TBD
 
-## Scanning
+## PHASE 2: Scanning & Enumeration
 
 ### Running: `nmap`
 
@@ -68,36 +59,88 @@ TBD
 
 Also see: [nikto.log](nikto.log)
 
-## Gaining Access
+## PHASE 3: Gaining Access & Exploitation
 
 ### Unprivileged Access
 
 TBD
 
 
-## Maintaining Access
+## PHASE 4: Maintaining Access & Persistence
 
 TBD
 
-## Clearing Tracks
+## PHASE 5: Clearing Tracks
 
 This is a test machine. However, in a Red Team scenario, we could:
 
-### Delete relevant logs from `/var/log/` - although that might draw attention.
+### Delete Logs
 
-> `rm -Rf /var/log/*`
+Delete relevant logs from `/var/log/` - although that might draw attention.
 
-### Search and replace our IP address in all logs via: 
+```bash
+rm -Rf /var/log/*
+```
 
-> `find /var/log -name "*" -exec sed -i 's/10.10.2.14/127.0.0.1/g' {} \;`
+### Replace our IP
 
-### Wipe bash history for any accounts we used via: 
+Search and replace our IP address in all logs via something like:
 
-> `cat /dev/null > /root/.bash_history`
->  
-> `cat /dev/null > /home/kathy/.bash_history`
->  
-> `cat /dev/null > /home/sam/.bash_history`
+```bash
+find /var/log -name "*" -exec sed -i 's/10.10.2.14/127.0.0.1/g' {} \;
+```
+
+This searches for all files under `/var/log/` and for each file found, searches for `10.10.2.14` (replace this with your IP) and and replace anywhere that is found with `127.0.0.1` or you could come up with your own scheme. For example, you could generate a random IP address with:
+
+```bash
+awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()*(max-min+1)); if(i<4){printf "."}}}'
+```
+
+I'd like this to use a new, unique, random IP address for every instance found, but `sed` doesn't support command injection in the search/replace operation. However, you could generate a random IP address to a variable and use that for this search and replace, like below. Note that the `2> /dev/null` hides any error messages of accessing files.
+
+#### OPTION 1: Separate statements
+
+In case you want to work out each individual piece of this, here they are as separate statements:
+
+```bash
+# MY IP address that I want to scrub.
+srcip="22.164.233.238"
+
+# Generate a new, unique, random IP address
+rndip=`awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()*(max-min+1)); if(i<4){printf "."}}}'`
+
+# Find all files and replace any place that you see my IP, with the random one.
+find /var/log -name "*" -exec sed -i "s/$srcip/$rndip/g" {} \; 2> /dev/null
+```
+
+#### OPTION 2: One ugly command
+
+This is something you could copy/paste, and just change your IP address.
+
+Basically, just set your `srcip` to your workstations' IP first, and MAKE SURE to run this with a space prefixed, so this command doesn't get written to the shell's history files (e.g. `~/.bash_history`, `~/.zsh_history`, etc.)
+
+```bash
+ srcip="10.10.10.10" ; find /tmp -name "*" -exec sed -i "s/$srcip/`awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()*(max-min+1)); if(i<4){printf "."}}}'`/g" {} \; 2>/dev/null
+```
+
+or optionally, start a new shell, turn off command history, AND start the command with a space prefixed (which also should not add the command to the shell history), then exit out of that separate process:
+
+```bash
+bash
+unset HISTFILE
+ srcip="10.10.10.10" ; find /tmp -name "*" -exec sed -i "s/$srcip/`awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()*(max-min+1)); if(i<4){printf "."}}}'`/g" {} \; 2>/dev/null
+exit
+```
+
+The key idea here is that hiding your address from the logs would be pointless if the *command* for hiding your address from the logs were in a log some place!
+
+### Wipe shell history
+
+For any accounts that we used, if we don't mind that this will destroy valid entries of the user too (and give them an indication their account was compromised), run a comand like this with `tee` writing out nothing/null to multiple files at once:
+
+```bash
+cat /dev/null | tee /root/.bash_history /home/kathy/.bash_history /home/sam/.bash_history
+```
 
 ## Summary
 
