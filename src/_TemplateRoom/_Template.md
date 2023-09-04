@@ -65,14 +65,17 @@ Also see: [nikto.log](nikto.log)
 
 TBD
 
-
-## PHASE 4: Maintaining Access & Persistence
+### Privilege Escalation / Privileged Access
 
 TBD
 
+## PHASE 4: Maintaining Access & Persistence
+
+This is a test/CTF machine, so this is out of scope.
+
 ## PHASE 5: Clearing Tracks
 
-This is a test machine. However, in a Red Team scenario, we could:
+This is a test/CTF machine, so this is out of scope. However, in a Red Team scenario, we could:
 
 ### Delete Logs
 
@@ -84,13 +87,21 @@ rm -Rf /var/log/*
 
 ### Replace our IP
 
-Search and replace our IP address in all logs via something like:
+Search and replace our IP address in all logs.
+
+#### OPTION 1: Simple
+
+The simplest way is via something like:
 
 ```bash
 find /var/log -name "*" -exec sed -i 's/10.10.2.14/127.0.0.1/g' {} \;
 ```
 
-This searches for all files under `/var/log/` and for each file found, searches for `10.10.2.14` (replace this with your IP) and and replace anywhere that is found with `127.0.0.1` or you could come up with your own scheme. For example, you could generate a random IP address with:
+This searches for all files under `/var/log/` and for each file found, searches for `10.10.2.14` (replace this with your IP) and and replace anywhere that is found with `127.0.0.1`.
+
+#### OPTION 2: Complex
+
+You could come up with your own scheme. For example, you could generate a random IP address with:
 
 ```bash
 awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()*(max-min+1)); if(i<4){printf "."}}}'
@@ -98,7 +109,7 @@ awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min+rand()
 
 I'd like this to use a new, unique, random IP address for every instance found, but `sed` doesn't support command injection in the search/replace operation. However, you could generate a random IP address to a variable and use that for this search and replace, like below. Note that the `2> /dev/null` hides any error messages of accessing files.
 
-#### OPTION 1: Separate statements
+##### As separate statements
 
 In case you want to work out each individual piece of this, here they are as separate statements:
 
@@ -113,7 +124,7 @@ rndip=`awk -v min=1 -v max=255 'BEGIN{srand(); for(i=1;i<=4;i++){ printf int(min
 find /var/log -name "*" -exec sed -i "s/$srcip/$rndip/g" {} \; 2> /dev/null
 ```
 
-#### OPTION 2: One ugly command
+##### As one ugly command
 
 This is something you could copy/paste, and just change your IP address.
 
