@@ -72,8 +72,10 @@ ROOM_NAME=$2
 
 if [ -n "$CTF_HOME" ]; then
     ROOM_PATH="$CTF_HOME/$PLATFORM/$ROOM_NAME"
+    print_msg info "Environment variable CTF_HOME detected. Setting room path to:\n\t$ROOM_PATH"
 else
     ROOM_PATH="$HOME/ctf/$PLATFORM/$ROOM_NAME"
+    print_msg info "Setting room path to: $ROOM_PATH"
 fi
 
 
@@ -85,7 +87,7 @@ if [ -d "$ROOM_PATH" ]; then
     echo "$export_statement" >> $zshrc_file
     print_msg success "ROOM export statement added to: $zshrc_file"
 
-    print_msg success "ROOM environment variable changed to $1"
+    print_msg success "ROOM environment variable changed to:\n\t$ROOM_PATH"
 
 else
     show_usage "$0"
@@ -104,3 +106,5 @@ if [[ "$WAS_SOURCED" == true ]]; then
     fi
 
 fi
+
+cd $ROOM_PATH

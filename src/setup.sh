@@ -97,11 +97,11 @@ fi
 
 if [[ "$WAS_SOURCED" == true ]]; then
 
-    print_msg info "Reloading .zshrc environment (${zshrc_file})"
-    source ${zshrc_file}
+    print_msg info "Reloading .zshrc environment (~/.zshrc)"
+    source ~/.zshrc
 
     if [ $? -ne 0 ]; then
-        print_msg error "Failed to .zshrc environment."
+        print_msg error "Failed to reload ~/.zshrc environment."
         success=false
     fi
 
