@@ -71,7 +71,11 @@ TBD
 
 ## PHASE 4: Maintaining Access & Persistence
 
-This is a test/CTF machine, so this is out of scope.
+This is a test/CTF machine, so this is out of scope. However, in a Red Team scenario, we could:
+
+- Add SSH key to `/root/.ssh/authorized_keys`
+- Create a privileged account that wouldn’t draw attention (ex: `operations`) or an unprivileged account and give it `sudo` access via group or directly in the `/etc/sudoers` file.
+- Install some other backdoor or service.
 
 ## PHASE 5: Clearing Tracks
 
