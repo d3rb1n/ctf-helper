@@ -109,7 +109,7 @@ function install_discord() {
     fi
 
     print_msg "info" "Copy the executable and supporting files to: /usr/share/discord/..."
-    run_command "cp -R ${HOME_PATH}/Downloads/Discord/* /usr/share/discord/" \
+    run_command "cp -R ${HOME_PATH}/Downloads/Discord/Discord/* /usr/share/discord/" \
         "Copied Discord files to /usr/share/discord/" \
         "Failed to copy Discord files"
 
