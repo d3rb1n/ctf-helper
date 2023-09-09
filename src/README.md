@@ -174,6 +174,12 @@ Example:
 
 > ![](../docs/images/discord-install.png)
 
+To run this directly without having to clone this repository, just copy and past this:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/d3rb1n/ctf-helper/main/src/apphelper-discord.sh | sudo zsh -s -- --install
+```
+
 When you uninstall, it:
 
 1. Removes files from `/usr/share/discord/`.
@@ -182,3 +188,9 @@ When you uninstall, it:
 Example:
 
 > ![](../docs/images/discord-uninstall.png)
+
+To run this directly without having to clone this repository, just copy and past this:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/d3rb1n/ctf-helper/main/src/apphelper-discord.sh | sudo zsh -s -- --uninstall
+```
