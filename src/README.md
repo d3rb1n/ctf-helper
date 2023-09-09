@@ -146,3 +146,39 @@ linpeas.sh    100%[==============================>] 828.43K  1.67MB/s    in 0.5s
 
 -rw-r--r-- 1 d3rb1n d3rb1n 848317 Aug 27 00:28 /home/d3rb1n/Downloads/linpeas.sh
 ```
+
+### Script: `apphelper-discord.sh`
+
+The native `.deb` installer does not work on Kali Linux. However, you can download the `.tar.gz` file, and manually unpack things and copy files to the right folder. It's a bit tedious, so this script installs or uninstalls Discord for XFCE on Kali Linux:
+
+```bash
+Installs or uninstalls Discord, because the regular .deb way is broken.
+
+  Usage: show_usage [ --install | --uninstall | --help ]
+
+Arguments:
+  --help      Shows this screen.
+  --install   Installs Discord and adds an app icon to the XFCE main menu.
+  --uninstall Uninstalls Discord and removes the XFCE mail menu icon.
+```
+
+When you run install, it:
+
+1. Downloads the `.tar.gz` file to `~/Downloads/`.
+2. Unpacks the `tar.gq` to `~/Downloads/Discord/`.
+3. Copies the executable and supporting files to `/usr/share/discord/`.
+4. Copies the XFCE main menu icon to `/usr/share/applications/`.
+5. Removes temporary files.
+
+Example:
+
+> ![](../docs/images/discord-install.png)
+
+When you uninstall, it:
+
+1. Removes files from `/usr/share/discord/`.
+2. Removes the XFCE main menu icon from `/usr/share/applications/`.
+
+Example:
+
+> ![](../docs/images/discord-uninstall.png)
