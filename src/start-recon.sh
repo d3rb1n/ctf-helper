@@ -53,9 +53,9 @@ fi
 
 # Define an array of program names and corresponding commands
 declare -A tasks
-tasks["nmap"]="nmap -sCV ${HOST} | tee ${ROOM}/nmap.log &"
-tasks["gobuster"]="gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://${HOST} 2> /dev/null | tee ${ROOM}/gobuster.log &"
-tasks["nikto"]="nikto -h ${HOST} 2>&1 | tee ${ROOM}/nikto.log &"
+tasks["nmap"]="nmap -sCV ${HOST} 2>&1 > ${ROOM}/nmap.log &"
+tasks["gobuster"]="gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://${HOST} 2>&1 > ${ROOM}/gobuster.log &"
+tasks["nikto"]="nikto -h ${HOST} 2>&1 > ${ROOM}/nikto.log &"
 
 # Loop through the array and launch tasks
 for program in "${(k)tasks[@]}"; do

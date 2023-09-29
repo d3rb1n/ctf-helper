@@ -59,6 +59,10 @@ TBD
 
 Also see: [nikto.log](nikto.log)
 
+### Exploration
+
+TBD
+
 ## PHASE 3: Gaining Access & Exploitation
 
 ### Unprivileged Access
