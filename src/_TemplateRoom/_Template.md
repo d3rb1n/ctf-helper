@@ -6,7 +6,12 @@ tags: ctf,nmap,gobuster,dirbuster,session,broken-authentication,javascript,apach
 ---
 # %ROOM%
 
-URL: [https://tryhackme.com/room/%ROOM%](https://tryhackme.com/room/%ROOM%) [Easy]
+URL: [https://tryhackme.com/room/%ROOM%](https://tryhackme.com/room/%ROOM%) 
+
+<!-- Choose One; Delete the other two -->
+<span class="badge rounded-pill bg-success" title="This is an Easy difficulty room."><i class="fa fa-bolt"></i>&nbsp;Easy</span>
+<span class="badge rounded-pill bg-warning text-dark" title="This is a Medium difficulty room."><i class="fa fa-wrench"></i>&nbsp;Medium</span>
+<span class="badge rounded-pill bg-danger" title="This is a Hard difficulty room."><i class="fa fa-skull-crossbones"></i>&nbsp;Hard</span>
 
 ## PHASE 1: Reconnaissance
 
