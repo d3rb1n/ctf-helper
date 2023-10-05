@@ -114,7 +114,7 @@ function install_discord() {
         "Failed to copy Discord files"
 
     print_msg "info" "Copy the XFCE menu item file to: /usr/share/applications/..."
-    run_command "cp ${HOME_PATH}/Downloads/Discord/discord.desktop /usr/share/applications/" \
+    run_command "cp ${HOME_PATH}/Downloads/Discord/Discord/discord.desktop /usr/share/applications/" \
         "Copied the .desktop file for all users" \
         "Failed to copy the .desktop file"
     
