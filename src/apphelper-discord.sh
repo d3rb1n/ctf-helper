@@ -86,13 +86,14 @@ function install_discord() {
 
     print_msg "info" "Checking if a download of: ${HOME_PATH}/Downloads/discord.tar.gz exists..."
     if [[ -e "${HOME_PATH}/Downloads/discord.tar.gz" ]]; then
-        print_msg "info" "Does exist. Skipping re-download."
-    else
-        print_msg "info" "Does not exist. Downloading Discord tar.gz file to: ${HOME_PATH}/Downloads/..."
-        run_command "wget -O ${HOME_PATH}/Downloads/discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'" \
-            "Downloaded Discord to: ${HOME_PATH}/Downloads/discord.tar.gz" \
-            "Failed to download Discord."
+        print_msg "warning" "Does exist. Deleting file because Discord is always updating; always download the latest."
+        rm -f "${HOME_PATH}/Downloads/discord.tar.gz"
     fi
+
+    print_msg "info" "Downloading Discord tar.gz file to: ${HOME_PATH}/Downloads/..."
+    run_command "wget -O ${HOME_PATH}/Downloads/discord.tar.gz 'https://discord.com/api/download?platform=linux&format=tar.gz'" \
+        "Downloaded Discord to: ${HOME_PATH}/Downloads/discord.tar.gz" \
+        "Failed to download Discord."
 
     print_msg "info" "Unpacking tar file..."
     run_command "mkdir -p ${HOME_PATH}/Downloads/Discord/ && tar zxf ${HOME_PATH}/Downloads/discord.tar.gz -C ${HOME_PATH}/Downloads/Discord/" \
